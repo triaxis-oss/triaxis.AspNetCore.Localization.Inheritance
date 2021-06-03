@@ -17,7 +17,6 @@ namespace triaxis.AspNetCore.Localization.Inheritance
         Type type;
         IStringLocalizer localizer;
         IStringLocalizer shared;
-        CultureInfo culture;
 
         /// <summary>
         /// Creates a new <see cref="InheritingLocalizerProvider" /> instance.
@@ -27,18 +26,12 @@ namespace triaxis.AspNetCore.Localization.Inheritance
         /// <param name="factory">
         /// An <see cref="IStringLocalizerFactory" /> providing actual <see cref="IStringLocalizer" /> instances.
         /// </param>
-        /// <param name="culture">Optional forced <see cref="CultureInfo" /> of the localized strings.</param>
         /// </params>
-        public InheritingLocalizerProvider(Type type, IStringLocalizerFactory factory, CultureInfo culture = null)
+        public InheritingLocalizerProvider(Type type, IStringLocalizerFactory factory)
         {
             this.factory = factory;
             this.type = type;
-            this.culture = culture;
             this.localizer = factory.Create(type);
-            if (culture != null)
-            {
-                this.localizer = localizer.WithCulture(culture);
-            }
         }
 
         /// <summary>
@@ -62,7 +55,7 @@ namespace triaxis.AspNetCore.Localization.Inheritance
             if (baseType == null || baseType == typeof(object))
                 return null;
 
-            return new InheritingLocalizerProvider(baseType, factory, culture);
+            return new InheritingLocalizerProvider(baseType, factory);
         }
 
         /// <summary>
@@ -159,18 +152,11 @@ namespace triaxis.AspNetCore.Localization.Inheritance
             }
         }
 
-        /// <summary>
-        /// Creates a new <see cref="IStringLocalizer" /> for a specific <see cref="CultureInfo" />.
-        /// </summary>
-        /// <params>
-        /// <param name="culture">The <see cref="CultureInfo" /> to use.</param>
-        /// </params>
-        /// <returns>
-        /// A culture-specific <see cref="IStringLocalizer" />.
-        /// </returns>
+        /// <inheritdoc />
         public IStringLocalizer WithCulture(CultureInfo culture)
         {
-            return new InheritingLocalizerProvider(type, factory, culture);
+            // no longer supported in newer .NET versions
+            return this;
         }
     }
 }
